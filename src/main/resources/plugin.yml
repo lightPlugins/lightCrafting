@@ -1,0 +1,4 @@
+name: lightCrafting
+version: '${project.version}'
+main: de.lightplugins.lightcrafting.LightCrafting
+api-version: '1.20'
