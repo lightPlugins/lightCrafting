@@ -1,0 +1,6 @@
+melting → Schmelze
+cooking → Kochen
+carpentry → Tischlerei
+blacksmith → Schmied
+armorsmith → Rüstungsschmied
+elementsmith -> Elementschmied
