@@ -4,10 +4,10 @@ settings:
   categories:
     erze:
       material: 'vanilla:iron_ingot'
-      displayname: 'Verschiedene Erze'
+      displayname: '<red>Verschiedene Erze'
       lore:
-        - 'Hier kannst du verschiedene'
-        - 'Erze herstellen.'
+        - '<gray>Hier kannst du verschiedene'
+        - '<#dc143d>Erze herstellen.'
       glow: false
   content:
     '0':
@@ -18,7 +18,7 @@ settings:
         - 'Ein sehr seltener Helm'
         - 'der deinen Start auf Ashura'
         - 'erleichtern soll.'
-        - ''
+        - 'Oida'
         - 'Kosten:'
         - '#add#'
       costs:

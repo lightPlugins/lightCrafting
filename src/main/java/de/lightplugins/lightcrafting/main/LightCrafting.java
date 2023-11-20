@@ -3,14 +3,17 @@ package de.lightplugins.lightcrafting.main;
 import com.zaxxer.hikari.HikariDataSource;
 import de.lightplugins.lightcrafting.database.tables.PlayerData;
 import de.lightplugins.lightcrafting.events.GainExp;
+import de.lightplugins.lightcrafting.util.ColorTranslation;
 import de.lightplugins.lightcrafting.util.FileManager;
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public final class LightCrafting extends JavaPlugin {
 
@@ -18,6 +21,7 @@ public final class LightCrafting extends JavaPlugin {
     public static final String consolePrefix = "§r[light§cCrafting§r] ";
     public static HashMap<UUID, PlayerData> level = new HashMap<>();
     public HikariDataSource ds;
+    public static ColorTranslation colorTranslation;
 
     public static FileManager settings;
     public static FileManager messages;
@@ -45,17 +49,23 @@ public final class LightCrafting extends JavaPlugin {
     public void onLoad() {
         getInstance = this;
 
-        settings = new FileManager(this, null, "settings.yml");
-        messages = new FileManager(this, null, "messages.yml");
+        settings = new FileManager(this, "master", "settings.yml");
+        messages = new FileManager(this, "master", "messages.yml");
 
-        armorsmith = new FileManager(this, "jobs", "jobs/armorsmith.yml");
-        blacksmith = new FileManager(this, "jobs", "jobs/blacksmith.yml");
-        carpentry = new FileManager(this, "jobs", "jobs/carpentry.yml");
-        cooking = new FileManager(this, "jobs", "jobs/cooking.yml");
-        elementsmith = new FileManager(this, "jobs", "jobs/elementsmith.yml");
-        loom = new FileManager(this, "jobs", "jobs/loom.yml");
-        melting = new FileManager(this, "jobs", "jobs/melting.yml");
+        armorsmith = new FileManager(this, "jobs", "armorsmith.yml");
+        blacksmith = new FileManager(this, "jobs", "blacksmith.yml");
+        carpentry = new FileManager(this, "jobs", "carpentry.yml");
+        cooking = new FileManager(this, "jobs", "cooking.yml");
+        elementsmith = new FileManager(this, "jobs", "elementsmith.yml");
+        loom = new FileManager(this, "jobs", "loom.yml");
+        melting = new FileManager(this, "jobs", "melting.yml");
 
+        colorTranslation = new ColorTranslation();
+
+        String test = melting.getConfig().saveToString();
+
+        Bukkit.getLogger().log(Level.WARNING, test);
+        Bukkit.getLogger().log(Level.WARNING, test);
 
     }
 

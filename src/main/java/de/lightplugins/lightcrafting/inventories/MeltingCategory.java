@@ -2,117 +2,150 @@ package de.lightplugins.lightcrafting.inventories;
 
 import de.lightplugins.lightcrafting.main.LightCrafting;
 import de.lightplugins.lightcrafting.util.ItemBuilder;
-import io.github.rysefoxx.inventory.plugin.animator.*;
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem;
-import io.github.rysefoxx.inventory.plugin.content.IntelligentItemColor;
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents;
 import io.github.rysefoxx.inventory.plugin.content.InventoryProvider;
-import io.github.rysefoxx.inventory.plugin.enums.AnimatorDirection;
-import io.github.rysefoxx.inventory.plugin.enums.IntelligentItemAnimatorType;
-import io.github.rysefoxx.inventory.plugin.enums.TimeSetting;
+import io.github.rysefoxx.inventory.plugin.pagination.Pagination;
 import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory;
-import org.bukkit.ChatColor;
+import io.github.rysefoxx.inventory.plugin.pagination.SlotIterator;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class MeltingCategory implements InventoryProvider {
 
+    public void paginationInventory(Player player) {
 
-    public static final FileConfiguration melting = LightCrafting.melting.getConfig();
+        FileConfiguration melting = LightCrafting.melting.getConfig();
 
-    public void itemNameAnimation(Player player) {
+        ConfigurationSection settingsSection = melting.getConfigurationSection("settings");
+
+        for (String key : settingsSection.getKeys(false)) {
+            if (key.startsWith("categories")) {
+                ConfigurationSection categorySection = settingsSection.getConfigurationSection(key);
+
+                // Hier kannst du den restlichen Code für die Kategorien-Verarbeitung einfügen
+            }
+        }
+
         RyseInventory.builder()
-                .title("Item-Name Animation")
+                .title(LightCrafting.colorTranslation.deserialize(melting.getString("settings.guiTitle")))
                 .rows(6)
                 .disableUpdateTask()
                 .provider(new InventoryProvider() {
                     @Override
                     public void init(Player player, InventoryContents contents) {
-                        IntelligentItem item = IntelligentItem.empty(new ItemStack(Material.STONE));
-                        contents.set(5, item);
 
-                        IntelligentItemNameAnimator itemNameAnimator = IntelligentItemNameAnimator.builder(LightCrafting.getInstance)
-                                .loop()
-                                .item(item)
-                                .slot(5)
-                                .delay(1, TimeSetting.SECONDS)
-                                .period(3, TimeSetting.MILLISECONDS)
-                                .type(IntelligentItemAnimatorType.WORD_BY_WORD)
-                                .colors(Arrays.asList('A', 'B', 'C', 'D'),
-                                        IntelligentItemColor.builder().paragraph("§a").bold().build(),
-                                        IntelligentItemColor.builder().rgbColor(23, 53, 234).bold().build(),
-                                        IntelligentItemColor.builder().bukkitColor(ChatColor.GRAY).build(),
-                                        IntelligentItemColor.builder().hexColor("#126b58").underline().build())
-                                .frames("ABCD")
-                                .build(contents);
-                        itemNameAnimator.animate();
-                    }
-                })
-                .build(LightCrafting.getInstance).open(player);
-    }
 
-    public void loreAnimaton(Player player) {
 
-        RyseInventory.builder()
-                .title("Lore Animation")
-                .rows(6)
-                .provider(new InventoryProvider() {
-                    @Override
-                    public void init(Player player, InventoryContents contents) {
-                        IntelligentItem item = IntelligentItem.empty(new ItemBuilder(Material.STONE).lore("This is a lore", "This is a lore 2").build());
-                        contents.set(5, item);
+                        Pagination pagination = contents.pagination();
+                        pagination.setItemsPerPage(7);
+                        pagination.iterator(SlotIterator
+                                .builder()
+                                .startPosition(2, 1)
+                                .type(SlotIterator.SlotIteratorType.HORIZONTAL)
+                                .blackList(Arrays.asList(26, 27))
+                                .build());
 
-                        IntelligentItemLoreAnimator loreAnimator = IntelligentItemLoreAnimator.builder(LightCrafting.getInstance)
-                                .loop()
-                                .item(item)
-                                .slot(5)
-                                .delay(1, TimeSetting.SECONDS)
-                                .period(3, TimeSetting.MILLISECONDS)
-                                .type(IntelligentItemAnimatorType.WORD_BY_WORD)
-                                .colors(Arrays.asList('A', 'B', 'C', 'D'),
-                                        IntelligentItemColor.builder().paragraph("§9").bold().build(),
-                                        IntelligentItemColor.builder().rgbColor(250, 1, 52).bold().build(),
-                                        IntelligentItemColor.builder().bukkitColor(ChatColor.DARK_GRAY).build(),
-                                        IntelligentItemColor.builder().hexColor("#e610c9").underline().build()
-                                )
-                                .lore(0, "ABCD")
-                                .lore(1, "DCBA")
-                                .build(contents);
-                        loreAnimator.animate();
-                    }
-                })
-                .build(LightCrafting.getInstance).open(player);
-    }
+                        int previousPage = pagination.page() - 1;
+                        contents.set(5, 3, IntelligentItem.of(new ItemBuilder(Material.ARROW).
+                                amount(pagination.isFirst()
+                                        ? 1
+                                        : pagination.page() - 1)
+                                .displayName(pagination.isFirst()
+                                        ? "§c§oThis is the first page"
+                                        : "§ePage §8⇒ §9" + previousPage).build(), event -> {
+                            if (pagination.isFirst()) {
+                                player.sendMessage("§c§oYou are already on the first page.");
+                                return;
+                            }
 
-    public void slideAnimation(Player player) {
-        RyseInventory.builder()
-                .title("Slide Animation")
-                .rows(6)
-                .disableUpdateTask()
-                .animation(SlideAnimation.builder(LightCrafting.getInstance)
-                        .from(3)
-                        .to(30)
-                        .items(IntelligentItem.empty(new ItemStack(Material.STONE)))
-                        .delay(1, TimeSetting.SECONDS)
-                        .period(11, TimeSetting.MILLISECONDS)
-                        .blockClickEvent()
-                        .direction(AnimatorDirection.VERTICAL_UP_DOWN)
-                        .build())
-                .provider(new InventoryProvider() {
-                    @Override
-                    public void init(Player player, InventoryContents contents, SlideAnimation animation) {
-                        IntelligentItem item = IntelligentItem.empty(new ItemStack(Material.OAK_BOAT));
-                        contents.set(0, item);
+                            RyseInventory currentInventory = pagination.inventory();
+                            currentInventory.open(player, pagination.previous().page());
+                        }));
 
-                        animation.animate(contents);
+                        for(String path : melting.getConfigurationSection("settings.categories").getKeys(false)) {
+
+                            Material material = Material.STONE;
+                            boolean glow = melting.getBoolean("settings.categories." + path + ".glow");
+                            //Component displayName = LightCrafting.colorTranslation.deserialize( melting.getString("settings.categories." + path + ".displayname"));
+                            String displayName = LightCrafting.colorTranslation.deserialize(melting.getString("settings.categories." + path + ".displayname")).content();
+
+
+                            String[] splitMaterial =
+                                    melting.getString("settings.categories." + path + ".material")
+                                            .split(":");
+
+
+                            if(splitMaterial[0].equalsIgnoreCase("vanilla")) {
+                                material = Material.valueOf(splitMaterial[1].toUpperCase());
+                            }
+
+                            ItemStack is = new ItemStack(material);
+                            ItemMeta im = is.getItemMeta();
+
+                            if(im == null) {
+                                throw new RuntimeException("Found a config error on " + path);
+                            }
+
+                            im.setDisplayName(displayName);
+
+                            im.getItemFlags().add(ItemFlag.HIDE_ATTRIBUTES);
+
+                            if(glow) {
+                                im.addEnchant(Enchantment.THORNS, 1, false);
+                                im.getItemFlags().add(ItemFlag.HIDE_ENCHANTS);
+                            }
+
+                            List<String> lore = new ArrayList<>();
+
+                            melting.getStringList("settings.categories." + path + ".lore").forEach(singleLine -> {
+                                lore.add("textComponent.content()");
+                            });
+
+                            if(im.getLore() != null) {
+                                im.getLore().clear();
+                            }
+
+                            im.setLore(lore);
+                            is.setItemMeta(im);
+
+                            pagination.addItem(IntelligentItem.of(is, event -> {
+                                event.getWhoClicked().sendMessage("§7Du hast die Kategorie §c" + path + "§7 angeklickt.");
+                            }));
+                        }
+
+                        int page = pagination.page() + 1;
+                        contents.set(5, 5, IntelligentItem.of(new ItemBuilder(Material.ARROW)
+                                .amount((pagination.isLast() ? 1 : page))
+                                .displayName(!pagination.isLast()
+                                        ? "§ePage §8⇒ §9" + page :
+                                        "§c§oThis is the last page").build(), event -> {
+                            if (pagination.isLast()) {
+                                player.sendMessage("§c§oYou are already on the last page.");
+                                return;
+                            }
+
+                            RyseInventory currentInventory = pagination.inventory();
+                            currentInventory.open(player, pagination.next().page());
+                        }));
+
+                        contents.fillEmptyPage(pagination.page(), new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
                     }
                 })
                 .build(LightCrafting.getInstance).open(player);

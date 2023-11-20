@@ -52,7 +52,7 @@ public class GainExp implements Listener {
         Block block = event.getBlock();
 
         MeltingCategory meltingCategory = new MeltingCategory();
-        meltingCategory.loreAnimaton(player);
+        meltingCategory.paginationInventory(player);
 
         int oldLevel = levelSystem.getPlayerLevel(player.getUniqueId());
 
