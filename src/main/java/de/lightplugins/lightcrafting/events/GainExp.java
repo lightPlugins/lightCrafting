@@ -1,5 +1,6 @@
 package de.lightplugins.lightcrafting.events;
 
+import de.lightplugins.lightcrafting.inventories.MeltingCategory;
 import de.lightplugins.lightcrafting.util.LevelSystem;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
@@ -49,6 +50,9 @@ public class GainExp implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         Block block = event.getBlock();
+
+        MeltingCategory meltingCategory = new MeltingCategory();
+        meltingCategory.loreAnimaton(player);
 
         int oldLevel = levelSystem.getPlayerLevel(player.getUniqueId());
 

@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import de.lightplugins.lightcrafting.database.tables.PlayerData;
 import de.lightplugins.lightcrafting.events.GainExp;
 import de.lightplugins.lightcrafting.util.FileManager;
+import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,6 +34,13 @@ public final class LightCrafting extends JavaPlugin {
     public static FileManager loom;
     public static FileManager melting;
 
+    /**
+     *  All Inventories Providers
+     */
+
+    public final InventoryManager inventoryManager = new InventoryManager(this);
+
+
     @Override
     public void onLoad() {
         getInstance = this;
@@ -56,6 +64,8 @@ public final class LightCrafting extends JavaPlugin {
 
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new GainExp(), this);
+
+        inventoryManager.invoke();
 
     }
 

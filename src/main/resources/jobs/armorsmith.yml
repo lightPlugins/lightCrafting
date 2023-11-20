@@ -1,3 +1,150 @@
 settings:
-  maxLevel: 250
-  baseXP: 100
+  guiTitle: '<red>Blacksmith'
+  fillItemMaterial: BLACK_STAINED_GLASS_PANE
+  categories:
+    helmet:
+      material: 'vanilla:diamond_helmet'
+      displayname: 'Verschiedene Helme'
+      lore:
+        - 'Hier kannst du verschiedene'
+        - 'Helme herstellen.'
+      glow: false
+    chestplate:
+      material: 'vanilla:diamond_helmet'
+      displayname: 'Verschiedene Helme'
+      lore:
+        - 'Hier kannst du verschiedene'
+        - 'Helme herstellen.'
+      glow: false
+    leggings:
+      material: 'vanilla:diamond_helmet'
+      displayname: 'Verschiedene Helme'
+      lore:
+        - 'Hier kannst du verschiedene'
+        - 'Helme herstellen.'
+      glow: false
+    boots:
+      material: 'vanilla:diamond_helmet'
+      displayname: 'Verschiedene Helme'
+      lore:
+        - 'Hier kannst du verschiedene'
+        - 'Helme herstellen.'
+      glow: false
+    shield:
+      material: 'vanilla:diamond_helmet'
+      displayname: 'Verschiedene Helme'
+      lore:
+        - 'Hier kannst du verschiedene'
+        - 'Helme herstellen.'
+      glow: false
+  content:
+    '0':
+      category: helmet
+      material: 'vanilla:leather_helmet'
+      glow: false
+      lore:
+        - 'Ein sehr seltener Helm'
+        - 'der deinen Start auf Ashura'
+        - 'erleichtern soll.'
+        - ''
+        - 'Kosten:'
+        - '#add#'
+      costs:
+        - 'money 200'
+        - 'itemsadder:mythril_ingot 5'
+        - 'itemsadder:silver_ingot 2'
+        - 'vanilla:iron_ingot 8'
+      requiredLevel: 1
+      gainXP: 10
+    '1':
+      category: chestplate
+      material: 'vanilla:leather_chestplate'
+      glow: false
+      lore:
+        - 'Ein sehr seltene Chestplate'
+        - 'der deinen Start auf Ashura'
+        - 'erleichtern soll.'
+        - ''
+        - 'Kosten:'
+        - '#add#'
+      costs:
+        - 'money 400'
+        - 'itemsadder:mythril_ingot 5'
+        - 'itemsadder:silver_ingot 2'
+        - 'vanilla:iron_ingot 8'
+      requiredLevel: 1
+      gainXP: 10
+    '2':
+      category: chestplate
+      material: 'vanilla:leather_chestplate'
+      glow: false
+      lore:
+        - 'Ein sehr seltener Helm'
+        - 'der deinen Start auf Ashura'
+        - 'erleichtern soll.'
+        - ''
+        - 'Kosten:'
+        - '#add#'
+      costs:
+        - 'money 400'
+        - 'itemsadder:mythril_ingot 5'
+        - 'itemsadder:silver_ingot 2'
+        - 'vanilla:iron_ingot 8'
+      requiredLevel: 1
+      gainXP: 10
+    '3':
+      category: leggings
+      material: 'vanilla:leather_leggings'
+      glow: false
+      lore:
+        - 'Ein sehr seltene Hose'
+        - 'der deinen Start auf Ashura'
+        - 'erleichtern soll.'
+        - ''
+        - 'Kosten:'
+        - '#add#'
+      costs:
+        - 'money 400'
+        - 'itemsadder:mythril_ingot 5'
+        - 'itemsadder:silver_ingot 2'
+        - 'vanilla:iron_ingot 8'
+      requiredLevel: 1
+      gainXP: 10
+    '4':
+      category: boots
+      material: 'vanilla:leather_boots'
+      glow: false
+      lore:
+        - 'Sehr seltene Schuhe'
+        - 'der deinen Start auf Ashura'
+        - 'erleichtern soll.'
+        - ''
+        - 'Kosten:'
+        - '#add#'
+      costs:
+        - 'money 200'
+        - 'itemsadder:mythril_ingot 5'
+        - 'itemsadder:silver_ingot 2'
+        - 'vanilla:iron_ingot 8'
+      requiredLevel: 1
+      gainXP: 10
+    '5':
+      category: shield
+      material: 'vanilla:shield'
+      glow: false
+      lore:
+        - 'Ein sehr seltenes Schild'
+        - 'das deinen Start auf Ashura'
+        - 'erleichtern soll.'
+        - ''
+        - 'Kosten:'
+        - '#add#'
+      costs:
+        - 'money 500'
+        - 'itemsadder:mythril_ingot 5'
+        - 'itemsadder:silver_ingot 2'
+        - 'vanilla:iron_ingot 8'
+      requiredLevel: 1
+      gainXP: 10
+
+

@@ -1,0 +1,30 @@
+settings:
+  guiTitle: '<red>Schmelze'
+  fillItemMaterial: BLACK_STAINED_GLASS_PANE
+  categories:
+    erze:
+      material: 'vanilla:iron_ingot'
+      displayname: 'Verschiedene Erze'
+      lore:
+        - 'Hier kannst du verschiedene'
+        - 'Erze herstellen.'
+      glow: false
+  content:
+    '0':
+      category: erze
+      material: 'vanilla:leather_helmet'
+      glow: false
+      lore:
+        - 'Ein sehr seltener Helm'
+        - 'der deinen Start auf Ashura'
+        - 'erleichtern soll.'
+        - ''
+        - 'Kosten:'
+        - '#add#'
+      costs:
+        - 'money 200'
+        - 'itemsadder:mythril_ingot 5'
+        - 'itemsadder:silver_ingot 2'
+        - 'vanilla:iron_ingot 8'
+      requiredLevel: 1
+      gainXP: 10
