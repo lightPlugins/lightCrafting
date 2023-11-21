@@ -1,30 +1,31 @@
 settings:
-  guiTitle: '<red>Schmelze'
+  guiTitle: '&#ffdc73Schmelzen | &8Level: &#ffdc7394'
   fillItemMaterial: BLACK_STAINED_GLASS_PANE
   categories:
     erze:
-      material: 'vanilla:iron_ingot'
-      displayname: '<red>Verschiedene Erze'
+      material: 'diamond'
+      displayname: '&#ffdc73Verschiedene Erze'
       lore:
-        - '<gray>Hier kannst du verschiedene'
-        - '<#dc143d>Erze herstellen.'
-      glow: false
+        - '&7Hier kannst du verschiedene'
+        - '&7Erze herstellen.'
+      glow: true
   content:
     '0':
       category: erze
-      material: 'vanilla:leather_helmet'
+      material: 'iron_ingot'
       glow: false
       lore:
-        - 'Ein sehr seltener Helm'
-        - 'der deinen Start auf Ashura'
-        - 'erleichtern soll.'
-        - 'Oida'
-        - 'Kosten:'
-        - '#add#'
+        - '&7Ein gewöhnlicher &#ffdc73Eisenbarren,'
+        - '&7den du zum &#ffdc73craften &7benötigst.'
+        - ''
+        - '&8+ &#ffdc73#gainxp# &7XP'
+        - ''
+        - '&7Was du brauchst:'
+        - '&8- &7Level &#ffdc731'
+        - '&8- &#ffdc73200 &7EUR'
+        - '&8- &#ffdc731&7x &#ffdc73Rohes Eisen'
       costs:
         - 'money 200'
-        - 'itemsadder:mythril_ingot 5'
-        - 'itemsadder:silver_ingot 2'
-        - 'vanilla:iron_ingot 8'
+        - 'raw_iron 1'
       requiredLevel: 1
       gainXP: 10

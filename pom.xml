@@ -99,6 +99,11 @@
             <url>"https://s01.oss.sonatype.org/content/groups/public/"</url>
         </repository>
 
+        <repository>
+            <id>minecodes-repository</id>
+            <url>https://repository.minecodes.pl/releases</url>
+        </repository>
+
 
     </repositories>
 
@@ -161,6 +166,13 @@
             <version>3.6.1</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>dev.rollczi</groupId>
+            <artifactId>liteskullapi</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+
 
     </dependencies>
 </project>

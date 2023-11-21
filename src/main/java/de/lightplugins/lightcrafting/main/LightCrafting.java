@@ -5,12 +5,15 @@ import de.lightplugins.lightcrafting.database.tables.PlayerData;
 import de.lightplugins.lightcrafting.events.GainExp;
 import de.lightplugins.lightcrafting.util.ColorTranslation;
 import de.lightplugins.lightcrafting.util.FileManager;
+import dev.rollczi.liteskull.LiteSkullFactory;
+import dev.rollczi.liteskull.api.SkullAPI;
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -22,6 +25,7 @@ public final class LightCrafting extends JavaPlugin {
     public static HashMap<UUID, PlayerData> level = new HashMap<>();
     public HikariDataSource ds;
     public static ColorTranslation colorTranslation;
+    public static SkullAPI skullAPI;
 
     public static FileManager settings;
     public static FileManager messages;
@@ -64,8 +68,14 @@ public final class LightCrafting extends JavaPlugin {
 
         String test = melting.getConfig().saveToString();
 
-        Bukkit.getLogger().log(Level.WARNING, test);
-        Bukkit.getLogger().log(Level.WARNING, test);
+        /**
+         * SkullData
+         */
+
+        this.skullAPI = LiteSkullFactory.builder()
+                .cacheExpireAfterWrite(Duration.ofMinutes(45L))
+                .bukkitScheduler(this)
+                .build();
 
     }
 

@@ -2,18 +2,13 @@ package de.lightplugins.lightcrafting.inventories;
 
 import de.lightplugins.lightcrafting.main.LightCrafting;
 import de.lightplugins.lightcrafting.util.ItemBuilder;
+import dev.rollczi.liteskull.api.SkullData;
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem;
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents;
 import io.github.rysefoxx.inventory.plugin.content.InventoryProvider;
 import io.github.rysefoxx.inventory.plugin.pagination.Pagination;
 import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory;
 import io.github.rysefoxx.inventory.plugin.pagination.SlotIterator;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -26,6 +21,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class MeltingCategory implements InventoryProvider {
 
@@ -44,19 +41,20 @@ public class MeltingCategory implements InventoryProvider {
         }
 
         RyseInventory.builder()
-                .title(LightCrafting.colorTranslation.deserialize(melting.getString("settings.guiTitle")))
+                .title(LightCrafting.colorTranslation.hexTranslation(melting.getString("settings.guiTitle")))
                 .rows(6)
                 .disableUpdateTask()
                 .provider(new InventoryProvider() {
                     @Override
                     public void init(Player player, InventoryContents contents) {
 
-
+                        contents.fill(new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
 
                         Pagination pagination = contents.pagination();
                         pagination.setItemsPerPage(7);
                         pagination.iterator(SlotIterator
                                 .builder()
+                                .override()
                                 .startPosition(2, 1)
                                 .type(SlotIterator.SlotIteratorType.HORIZONTAL)
                                 .blackList(Arrays.asList(26, 27))
@@ -79,12 +77,19 @@ public class MeltingCategory implements InventoryProvider {
                             currentInventory.open(player, pagination.previous().page());
                         }));
 
-                        for(String path : melting.getConfigurationSection("settings.categories").getKeys(false)) {
+                        CompletableFuture<ItemStack> skullFuture = LightCrafting.skullAPI.getSkull(player.getName());
+                        skullFuture.thenAcceptAsync(skullData -> {
+                            contents.set(0, 4, skullData);
+                        });
+
+
+                        for(String path : Objects.requireNonNull(melting.getConfigurationSection(
+                                "settings.categories")).getKeys(false)) {
 
                             Material material = Material.STONE;
                             boolean glow = melting.getBoolean("settings.categories." + path + ".glow");
                             //Component displayName = LightCrafting.colorTranslation.deserialize( melting.getString("settings.categories." + path + ".displayname"));
-                            String displayName = LightCrafting.colorTranslation.deserialize(melting.getString("settings.categories." + path + ".displayname")).content();
+                            String displayName = LightCrafting.colorTranslation.hexTranslation(melting.getString("settings.categories." + path + ".displayname"));
 
 
                             String[] splitMaterial =
@@ -115,7 +120,7 @@ public class MeltingCategory implements InventoryProvider {
                             List<String> lore = new ArrayList<>();
 
                             melting.getStringList("settings.categories." + path + ".lore").forEach(singleLine -> {
-                                lore.add("textComponent.content()");
+                                lore.add(LightCrafting.colorTranslation.hexTranslation(singleLine));
                             });
 
                             if(im.getLore() != null) {
@@ -145,7 +150,8 @@ public class MeltingCategory implements InventoryProvider {
                             currentInventory.open(player, pagination.next().page());
                         }));
 
-                        contents.fillEmptyPage(pagination.page(), new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
+
+                        //contents.fillEmpty(new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
                     }
                 })
                 .build(LightCrafting.getInstance).open(player);
