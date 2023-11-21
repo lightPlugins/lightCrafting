@@ -1,6 +1,7 @@
 package de.lightplugins.lightcrafting.events;
 
-import de.lightplugins.lightcrafting.inventories.MeltingCategory;
+import de.lightplugins.lightcrafting.inventories.CategoryInventory;
+import de.lightplugins.lightcrafting.main.LightCrafting;
 import de.lightplugins.lightcrafting.util.LevelSystem;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
@@ -51,8 +52,8 @@ public class GainExp implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
-        MeltingCategory meltingCategory = new MeltingCategory();
-        meltingCategory.paginationInventory(player);
+        CategoryInventory categoryInventory = new CategoryInventory();
+        categoryInventory.paginationInventory(player, LightCrafting.melting.getConfig());
 
         int oldLevel = levelSystem.getPlayerLevel(player.getUniqueId());
 

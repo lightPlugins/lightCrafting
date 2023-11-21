@@ -1,31 +1,33 @@
 settings:
-  guiTitle: '&#ffdc73Schmelzen | &8Level: &#ffdc7394'
+  guiTitle: '#ffdc73Schmelzen | &8Level: #ffdc7394'
   fillItemMaterial: BLACK_STAINED_GLASS_PANE
+  extraLore:
+    itemReq: '&8- &7#itemName# #ffdc73#amount#'
+    moneyReq: '&8- #ffdc73#money# &7EUR'
+    levelReq: '&8- &7Level #ffdc73#level#'
+    cantCraft: '&cDu kannst dieses Item nicht herstellen'
+    canCraft: '&aDu kannst dieses Item herstellen'
   categories:
     erze:
-      material: 'diamond'
-      displayname: '&#ffdc73Verschiedene Erze'
+      material: 'vanilla:diamond'
+      displayname: '#ffdc73Verschiedene Erze'
       lore:
         - '&7Hier kannst du verschiedene'
         - '&7Erze herstellen.'
+        - ''
+        - '&7In dieser #ffdc73Kategorie &7gibt'
+        - '&7es #ffdc73&l#amount# &7Items, die'
+        - '&7du herstellen kannst.'
       glow: true
   content:
     '0':
       category: erze
-      material: 'iron_ingot'
+      material: 'vanilla:iron_ingot'
       glow: false
-      lore:
-        - '&7Ein gewöhnlicher &#ffdc73Eisenbarren,'
-        - '&7den du zum &#ffdc73craften &7benötigst.'
-        - ''
-        - '&8+ &#ffdc73#gainxp# &7XP'
-        - ''
-        - '&7Was du brauchst:'
-        - '&8- &7Level &#ffdc731'
-        - '&8- &#ffdc73200 &7EUR'
-        - '&8- &#ffdc731&7x &#ffdc73Rohes Eisen'
-      costs:
-        - 'money 200'
-        - 'raw_iron 1'
-      requiredLevel: 1
-      gainXP: 10
+      required:
+        items:
+          - 'vanilla:raw_iron 1'
+        money: 200
+        level: 1
+      reward:
+        xp: 10
