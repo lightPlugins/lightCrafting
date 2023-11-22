@@ -1,7 +1,6 @@
 package de.lightplugins.lightcrafting.inventories;
 
 import de.lightplugins.lightcrafting.main.LightCrafting;
-import de.lightplugins.lightcrafting.util.FileManager;
 import de.lightplugins.lightcrafting.util.ItemBuilder;
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem;
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents;
@@ -14,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -49,7 +47,6 @@ public class ContentInventory implements InventoryProvider {
             playerSkull[0] = skullData;
         });
 
-
         RyseInventory.builder()
                 .title(LightCrafting.colorTranslation.hexTranslation(jobConfig.getString("settings.guiTitle")))
                 .rows(6)
@@ -57,8 +54,9 @@ public class ContentInventory implements InventoryProvider {
                 .provider(new InventoryProvider() {
                     @Override
                     public void update(Player player, InventoryContents contents) {
+
                         contents.update(4, playerSkull[0]);
-                        Bukkit.getLogger().log(Level.WARNING, "Timer active Content");
+
                     }
                     @Override
                     public void init(Player player, InventoryContents contents) {
@@ -93,7 +91,7 @@ public class ContentInventory implements InventoryProvider {
                                         ? "§cDas ist die erste Seite"
                                         : pageBack).build(), event -> {
                             if (pagination.isFirst()) {
-                                player.sendMessage("§c§oYou are already on the first page.");
+                                player.sendMessage("§c§oDu bist bereits auf der ersten Seite");
                                 return;
                             }
 
@@ -106,7 +104,7 @@ public class ContentInventory implements InventoryProvider {
                          */
 
                         int page = pagination.page() + 1;
-                        contents.set(4, 6, IntelligentItem.of(new ItemBuilder(Material.ARROW)
+                        contents.set(5, 6, IntelligentItem.of(new ItemBuilder(Material.ARROW)
                                 .amount((pagination.isLast() ? 1 : page))
                                 .displayName(!pagination.isLast()
                                         ? pageForward :
@@ -124,17 +122,6 @@ public class ContentInventory implements InventoryProvider {
 
                         /*
 
-                                Liste alle Kategorien in die pages und generiere nach Anzahl
-                                der Kategorien die Pages.
-
-                         */
-
-
-                        for(String path : Objects.requireNonNull(jobConfig.getConfigurationSection(
-                                "settings.content")).getKeys(false)) {
-
-                            /*
-
                                Zeige nur die Items an, die zu der zuvor angeklickten Kategorie zählen.
 
                                  content:
@@ -142,6 +129,12 @@ public class ContentInventory implements InventoryProvider {
                                      category: erze
 
                              */
+
+
+                        for(String path : Objects.requireNonNull(jobConfig.getConfigurationSection(
+                                "settings.content")).getKeys(false)) {
+
+
 
                             if(!categories.equalsIgnoreCase(
                                     jobConfig.getString("settings.content." + path + ".category"))) {
@@ -181,10 +174,66 @@ public class ContentInventory implements InventoryProvider {
                                 im.getLore().clear();
                             }
 
-                            //im.setLore(lore);
                             is.setItemMeta(im);
 
+                            /*
+                                    Hier beginnen die Abfragen zum Herstellen
+                             */
+
                             pagination.addItem(IntelligentItem.of(is, event -> {
+
+                                List<ItemStack> requiredItems = getRequiredMaterials(jobConfig, path);
+                                List<ItemStack> rewardItems = new ArrayList<>();
+
+                                jobConfig.getStringList("settings.content." + path + ".reward.items")
+                                        .forEach(singleRewardItem -> {
+
+                                    String[] itemMaterial = singleRewardItem.split(":");
+
+                                    if(itemMaterial[0].equalsIgnoreCase("vanilla")) {
+
+                                        String[] amountParam = itemMaterial[1].split(" ");
+
+                                        ItemStack finalItemStack = new ItemStack(
+                                                Material.valueOf(amountParam[0].toUpperCase()), Integer.parseInt(amountParam[1]));
+
+                                        rewardItems.add(finalItemStack);
+                                    }
+                                });
+
+                                if(!hasMoney(player, jobConfig, path)) {
+                                    LightCrafting.util.sendMessage(player,
+                                            "&cDu hast nicht das nötige &4Börgergeld&7!");
+                                    return;
+                                }
+
+                                if(!checksum(player, requiredItems)) {
+                                    LightCrafting.util.sendMessage(player,
+                                            "&cDir fehlen für das Herstellen Resourcen&7!");
+                                    return;
+                                }
+
+                                if(!hasLevel(player, 5, path)) {
+                                    LightCrafting.util.sendMessage(player,
+                                            "&cDein Level ist für diese Herstellung zu niedrig&7!");
+                                    return;
+                                }
+
+                                removeRequiredItems(player, requiredItems);
+
+
+                                rewardItems.forEach(singleRewardItem -> {
+                                    if(LightCrafting.util.isInventoryEmpty(player)) {
+                                        player.getInventory().addItem(singleRewardItem);
+                                    } else {
+                                        player.getWorld().dropItem(player.getLocation(), singleRewardItem);
+                                    }
+                                });
+
+
+
+
+
                                 event.getWhoClicked().sendMessage("§7Du hast die Kategorie §c" + path + "§7 angeklickt.");
                             }));
                         }
@@ -194,7 +243,97 @@ public class ContentInventory implements InventoryProvider {
                 })
                 .build(LightCrafting.getInstance).open(player);
     }
-    
-    
-    
+
+
+    private Boolean checksum(Player player, List<ItemStack> itemStacks) {
+
+        List<ItemStack> checksum = new ArrayList<>();
+        itemStacks.forEach(singleItem -> {
+            for (ItemStack playerSingleItem : player.getInventory().getContents()) {
+
+                if(playerSingleItem != null && playerSingleItem.getItemMeta() != null) {
+
+                    if(amountOfItem(playerSingleItem) >= amountOfItem(singleItem)) {
+                        if(playerSingleItem.getType().equals(singleItem.getType())) {
+                            checksum.add(singleItem);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+
+        Bukkit.getLogger().log(Level.WARNING, "itemStacks " + itemStacks);
+        Bukkit.getLogger().log(Level.WARNING, "checksum   " + checksum);
+
+        return itemStacks.equals(checksum);
+    }
+
+    private int amountOfItem(ItemStack itemStack) {
+        return itemStack.getAmount();
+    }
+
+    private Boolean hasLevel(Player player, int requiredLevel, String jobID) {
+
+
+        return true;
+    }
+
+    private Boolean hasMoney(Player player, FileConfiguration jobConfig, String itemID) {
+        double neededMoney = jobConfig.getDouble("settings.content." + itemID + ".required.money");
+        double currentMoney = LightCrafting.getEconomy().getBalance(player);
+        return currentMoney >= neededMoney;
+    }
+
+    private Double getMoney(Player player) {
+        return LightCrafting.getEconomy().getBalance(player);
+    }
+
+    private List<ItemStack> getRequiredMaterials(FileConfiguration jobConfig, String itemID) {
+
+        List<ItemStack> requiredItems = new ArrayList<>();
+
+        jobConfig.getStringList("settings.content." + itemID + ".required.items").forEach(singleItem -> {
+
+            String[] splitMaterial = singleItem.split(":");
+
+            if(splitMaterial[0].equalsIgnoreCase("vanilla")) {
+                String[] splitParams = splitMaterial[1].split(" ");
+                ItemStack is = new ItemStack(Material.valueOf(splitParams[0].toUpperCase()), Integer.parseInt(splitParams[1]));
+                requiredItems.add(is);
+
+            }
+        });
+
+        return requiredItems;
+
+    }
+
+    private void removeRequiredItems(Player player, List<ItemStack> removeItems) {
+
+        removeItems.forEach(removeItem -> {
+
+            for (ItemStack singleItem : player.getInventory().getContents()) {
+
+                if(singleItem == null) {
+                    Bukkit.getLogger().log(Level.WARNING, "singleItem is null!");
+                    continue;
+                }
+
+                if(singleItem.getItemMeta() == null) {
+                    Bukkit.getLogger().log(Level.WARNING, "singleItemMeta is null!");
+                    continue;
+                }
+                if(singleItem.getType().equals(removeItem.getType())) {
+                    if(singleItem.getAmount() > 1) {
+                        singleItem.setAmount(singleItem.getAmount() - removeItem.getAmount());
+                    } else {
+                        player.getInventory().remove(singleItem);
+
+                    }
+                }
+            }
+
+        });
+    }
 }

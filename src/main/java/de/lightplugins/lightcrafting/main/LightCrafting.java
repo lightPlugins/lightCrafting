@@ -5,12 +5,15 @@ import de.lightplugins.lightcrafting.database.tables.PlayerData;
 import de.lightplugins.lightcrafting.events.GainExp;
 import de.lightplugins.lightcrafting.util.ColorTranslation;
 import de.lightplugins.lightcrafting.util.FileManager;
+import de.lightplugins.lightcrafting.util.Util;
 import dev.rollczi.liteskull.LiteSkullFactory;
 import dev.rollczi.liteskull.api.SkullAPI;
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.Duration;
@@ -26,6 +29,8 @@ public final class LightCrafting extends JavaPlugin {
     public HikariDataSource ds;
     public static ColorTranslation colorTranslation;
     public static SkullAPI skullAPI;
+    public static Util util;
+    private static Economy econ = null;
 
     public static FileManager settings;
     public static FileManager messages;
@@ -65,6 +70,7 @@ public final class LightCrafting extends JavaPlugin {
         melting = new FileManager(this, "jobs", "melting.yml");
 
         colorTranslation = new ColorTranslation();
+        util = new Util();
 
         String test = melting.getConfig().saveToString();
 
@@ -72,7 +78,7 @@ public final class LightCrafting extends JavaPlugin {
          * SkullData
          */
 
-        this.skullAPI = LiteSkullFactory.builder()
+        skullAPI = LiteSkullFactory.builder()
                 .cacheExpireAfterWrite(Duration.ofMinutes(45L))
                 .bukkitScheduler(this)
                 .build();
@@ -85,6 +91,12 @@ public final class LightCrafting extends JavaPlugin {
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new GainExp(), this);
 
+        if (!setupEconomy() ) {
+            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         inventoryManager.invoke();
 
     }
@@ -92,5 +104,21 @@ public final class LightCrafting extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+    }
+
+    public static Economy getEconomy() {
+        return econ;
+    }
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return true;
     }
 }

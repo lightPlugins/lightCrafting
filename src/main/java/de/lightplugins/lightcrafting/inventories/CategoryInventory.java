@@ -89,7 +89,7 @@ public class CategoryInventory implements InventoryProvider {
                                         ? "§cDas ist die erste Seite"
                                         : pageBack).build(), event -> {
                             if (pagination.isFirst()) {
-                                player.sendMessage("§c§oYou are already on the first page.");
+                                player.sendMessage("§c§oDu bist bereits auf der ersten Seite");
                                 return;
                             }
 

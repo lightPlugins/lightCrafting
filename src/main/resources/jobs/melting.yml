@@ -1,10 +1,11 @@
 settings:
+  jobID: melting
   guiTitle: '#ffdc73Schmelzen | &8Level: #ffdc7394'
   fillItemMaterial: BLACK_STAINED_GLASS_PANE
   extraLore:
-    itemReq: '&8- &7#itemName# #ffdc73#amount#'
-    moneyReq: '&8- #ffdc73#money# &7EUR'
-    levelReq: '&8- &7Level #ffdc73#level#'
+    itemReq: '&8- &7#itemName# #ffdc73#currentAmount#&7/#ffdc73#neededAdmount#'
+    moneyReq: '&8- #ffdc73#currentMoney#&7/#ffdc73#neededMoney# &7EUR'
+    levelReq: '&8- &7Level #ffdc73#currentLevel#&7/#ffdc73#neededLevel#'
     cantCraft: '&cDu kannst dieses Item nicht herstellen'
     canCraft: '&aDu kannst dieses Item herstellen'
   categories:
@@ -31,3 +32,44 @@ settings:
         level: 1
       reward:
         xp: 10
+        items:
+          - 'vanilla:iron_ingot 1'
+    '1':
+      category: erze
+      material: 'vanilla:gold_ingot'
+      glow: false
+      required:
+        items:
+          - 'vanilla:raw_gold 1'
+        money: 200
+        level: 1
+      reward:
+        xp: 10
+        items:
+          - 'vanilla:gold_ingot 1'
+    '2':
+      category: erze
+      material: 'vanilla:iron_block'
+      glow: false
+      required:
+        items:
+          - 'vanilla:iron_ingot 9'
+        money: 200
+        level: 1
+      reward:
+        xp: 10
+        items:
+          - 'vanilla:iron_block 1'
+    '3':
+      category: erze
+      material: 'vanilla:gold_block'
+      glow: false
+      required:
+        items:
+          - 'vanilla:gold_ingot 9'
+        money: 200
+        level: 1
+      reward:
+        xp: 10
+        items:
+          - 'vanilla:gold_block 1'
