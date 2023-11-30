@@ -90,11 +90,13 @@ public class CategoryInventory implements InventoryProvider {
                                         : pageBack).build(), event -> {
                             if (pagination.isFirst()) {
                                 player.sendMessage("§c§oDu bist bereits auf der ersten Seite");
+                                LightCrafting.util.playSuccessSound(player, false);
                                 return;
                             }
 
                             RyseInventory currentInventory = pagination.inventory();
                             currentInventory.open(player, pagination.previous().page());
+                            LightCrafting.util.playSuccessSound(player, true);
                         }));
 
                         /**
@@ -109,11 +111,13 @@ public class CategoryInventory implements InventoryProvider {
                                         "§cDas ist die letzte Seite").build(), event -> {
                             if (pagination.isLast()) {
                                 player.sendMessage("§c§oDu bist bereits auf der letzten Seite");
+                                LightCrafting.util.playSuccessSound(player, false);
                                 return;
                             }
 
                             RyseInventory currentInventory = pagination.inventory();
                             currentInventory.open(player, pagination.next().page());
+                            LightCrafting.util.playSuccessSound(player, true);
                         }));
 
 
@@ -187,8 +191,9 @@ public class CategoryInventory implements InventoryProvider {
                             is.setItemMeta(im);
 
                             pagination.addItem(IntelligentItem.of(is, event -> {
-                                    ContentInventory contentInventory = new ContentInventory();
-                                    contentInventory.paginationInventory(player, path, jobConfig);
+                                ContentInventory contentInventory = new ContentInventory();
+                                contentInventory.paginationInventory(player, path, jobConfig);
+                                LightCrafting.util.playSuccessSound(player, true);
                             }));
                         }
 

@@ -92,11 +92,13 @@ public class ContentInventory implements InventoryProvider {
                                         : pageBack).build(), event -> {
                             if (pagination.isFirst()) {
                                 player.sendMessage("§c§oDu bist bereits auf der ersten Seite");
+                                LightCrafting.util.playSuccessSound(player, false);
                                 return;
                             }
 
                             RyseInventory currentInventory = pagination.inventory();
                             currentInventory.open(player, pagination.previous().page());
+                            LightCrafting.util.playSuccessSound(player, true);
                         }));
 
                         /**
@@ -111,11 +113,13 @@ public class ContentInventory implements InventoryProvider {
                                         "§cDas ist die letzte Seite").build(), event -> {
                             if (pagination.isLast()) {
                                 player.sendMessage("§c§oDu bist bereits auf der letzten Seite");
+                                LightCrafting.util.playSuccessSound(player, false);
                                 return;
                             }
 
                             RyseInventory currentInventory = pagination.inventory();
                             currentInventory.open(player, pagination.next().page());
+                            LightCrafting.util.playSuccessSound(player, true);
                         }));
 
 
@@ -204,18 +208,21 @@ public class ContentInventory implements InventoryProvider {
                                 if(!hasMoney(player, jobConfig, path)) {
                                     LightCrafting.util.sendMessage(player,
                                             "&cDu hast nicht das nötige &4Börgergeld&7!");
+                                    LightCrafting.util.playSuccessSound(player, false);
                                     return;
                                 }
 
                                 if(!checksum(player, requiredItems)) {
                                     LightCrafting.util.sendMessage(player,
                                             "&cDir fehlen für das Herstellen Resourcen&7!");
+                                    LightCrafting.util.playSuccessSound(player, false);
                                     return;
                                 }
 
                                 if(!hasLevel(player, 5, path)) {
                                     LightCrafting.util.sendMessage(player,
                                             "&cDein Level ist für diese Herstellung zu niedrig&7!");
+                                    LightCrafting.util.playSuccessSound(player, false);
                                     return;
                                 }
 
@@ -228,6 +235,8 @@ public class ContentInventory implements InventoryProvider {
                                     } else {
                                         player.getWorld().dropItem(player.getLocation(), singleRewardItem);
                                     }
+
+                                    LightCrafting.util.playSuccessSound(player, true);
                                 });
 
 
@@ -310,30 +319,30 @@ public class ContentInventory implements InventoryProvider {
     }
 
     private void removeRequiredItems(Player player, List<ItemStack> removeItems) {
-
         removeItems.forEach(removeItem -> {
+            int remainingAmount = removeItem.getAmount();
 
             for (ItemStack singleItem : player.getInventory().getContents()) {
-
-                if(singleItem == null) {
-                    Bukkit.getLogger().log(Level.WARNING, "singleItem is null!");
+                if (singleItem == null || !singleItem.getType().equals(removeItem.getType())) {
                     continue;
                 }
 
-                if(singleItem.getItemMeta() == null) {
-                    Bukkit.getLogger().log(Level.WARNING, "singleItemMeta is null!");
-                    continue;
+                if (singleItem.getAmount() >= remainingAmount) {
+                    // Genug Gegenstände im aktuellen Stapel
+                    singleItem.setAmount(singleItem.getAmount() - remainingAmount);
+                    remainingAmount = 0; // Keine Menge mehr übrig
+                    break; // Verlasse die Schleife, da die erforderliche Menge erreicht ist
+                } else {
+                    // Nicht genug Gegenstände im aktuellen Stapel, entferne diesen Stapel
+                    remainingAmount -= singleItem.getAmount();
+                    player.getInventory().remove(singleItem);
                 }
-                if(singleItem.getType().equals(removeItem.getType())) {
-                    if(singleItem.getAmount() > 1) {
-                        singleItem.setAmount(singleItem.getAmount() - removeItem.getAmount());
-                    } else {
-                        player.getInventory().remove(singleItem);
 
-                    }
+                if (remainingAmount <= 0) {
+                    // Die erforderliche Menge wurde erreicht
+                    break;
                 }
             }
-
         });
     }
 }

@@ -13,15 +13,37 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.logging.Level;
 
 public class Util {
 
+    /*  Play sound for target player  */
+
+    public void playSuccessSound(Player player, Boolean success) {
+
+        if(success) {
+            Sound sound = Sound.valueOf(Objects.requireNonNull(
+                    LightCrafting.settings.getConfig().getString("sounds.onSuccess.data")).toUpperCase());
+            double volume = LightCrafting.settings.getConfig().getDouble("sounds.onSuccess.volume");
+            double pitch = LightCrafting.settings.getConfig().getDouble("sounds.onSuccess.pitch");
+            player.playSound(player, sound, (float)volume, (float)pitch);
+            return;
+        }
+
+        Sound sound = Sound.valueOf(Objects.requireNonNull(
+                LightCrafting.settings.getConfig().getString("sounds.onFailure.data")).toUpperCase());
+        double volume = LightCrafting.settings.getConfig().getDouble("sounds.onFailure.volume");
+        double pitch = LightCrafting.settings.getConfig().getDouble("sounds.onFailure.pitch");
+        player.playSound(player, sound, (float)volume, (float)pitch);
+
+    }
+
     /*  Send Message with Prefix to player  */
 
     public void sendMessage(Player player, String message) {
-        String prefix = MessagePath.Prefix.getPath();
+        String prefix = MessagePath.PREFIX.getPath();
         player.sendMessage(LightCrafting.colorTranslation.hexTranslation(prefix + message));
     }
     /*  Send a message List to player without Prefix  */

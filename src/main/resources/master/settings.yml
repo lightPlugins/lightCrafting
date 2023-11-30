@@ -14,3 +14,12 @@ mysql:
     prepStmtCacheSqlLimit: 2048
     cachePrepStmts: true
     useServerPrepStmts: true
+sounds:
+  onSuccess:
+    data: ENTITY_PLAYER_LEVELUP
+    volume: 1.0
+    pitch: 1.8
+  onFailure:
+    data: BLOCK_NOTE_BLOCK_BELL
+    volume: 1.0
+    pitch: 0.3

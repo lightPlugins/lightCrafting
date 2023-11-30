@@ -5,7 +5,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public enum MessagePath {
 
-    Prefix("prefix"),
+    PREFIX("prefix"),
+    NO_PERMISSION("noPermission"),
+    WRONG_COMMAND("wrongCommand"),
+    RELOAD("reload"),
+
 
     ;
 
